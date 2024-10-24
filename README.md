@@ -11,5 +11,4 @@
 Using Python 3.12.3
 
 1. Go into the backend directory in the terminal (cd backend)
-2. source .venv/bin/activate
-3. pip install -r requirements.txt
+2. Run the install script ./install.sh
