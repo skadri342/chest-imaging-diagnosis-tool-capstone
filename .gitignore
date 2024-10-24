@@ -1,5 +1,6 @@
 # Backend
 backend/.venv/
+backend/.vscode/
 backend/src/routes/__pycache__/
 backend/*.pyc
 backend/.env
