@@ -1,11 +1,9 @@
 # Backend
-backend/venv/
+backend/.venv/
 backend/src/routes/__pycache__/
 backend/*.pyc
 backend/.env
 **/__pycache__/
-**/.venv/
-**/venv/
 
 # Frontend
 frontend/node_modules/
