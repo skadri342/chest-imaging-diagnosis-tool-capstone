@@ -33,5 +33,5 @@ app.register_blueprint(ml_bp, url_prefix='/api/ml')
 
 if __name__ == '__main__':
     print("Server starting...")
-    print("hi shams")
+    print("hi shams123")
     app.run(debug=True, port=7000, host='0.0.0.0')
