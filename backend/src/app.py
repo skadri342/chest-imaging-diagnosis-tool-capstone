@@ -9,7 +9,7 @@ CORS(app, resources={
     r"/*": {
         "origins": ["file://*", "http://localhost:*", "http://127.0.0.1:*", "null"],
         "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"],
+        "allow_headers": ["Content-Type", "Authorization"],        
     }
 })
 
