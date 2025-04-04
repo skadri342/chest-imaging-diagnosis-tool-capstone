@@ -662,3 +662,62 @@
 2025-04-04 05:34:39,404 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:34:39] "GET /api/ml/history HTTP/1.1" 200 -
 2025-04-04 05:34:41,715 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:34:41] "GET /test HTTP/1.1" 200 -
 2025-04-04 05:34:41,723 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:34:41] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:35:11,702 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:35:11] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:35:41,705 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:35:41] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:36:11,716 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:36:11] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:36:41,708 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:36:41] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:37:11,710 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:37:11] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:37:41,715 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:37:41] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:38:11,729 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:38:11] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:38:41,807 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 05:38:41] "GET /test HTTP/1.1" 200 -
+2025-04-04 05:59:09,676 - __main__ - INFO - Starting application...
+2025-04-04 05:59:09,678 - __main__ - INFO - Connecting to MongoDB: None
+2025-04-04 05:59:19,991 - __main__ - INFO - Model loaded successfully.
+2025-04-04 05:59:50,467 - __main__ - ERROR - Failed to connect to MongoDB: localhost:27017: [Errno 111] Connection refused, Timeout: 30s, Topology Description: <TopologyDescription id: 67efad6d37c2f4528a1df125, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 111] Connection refused')>]>
+2025-04-04 05:59:50,473 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8001
+ * Running on http://192.168.2.132:8001
+2025-04-04 05:59:50,473 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-04 06:00:44,456 - __main__ - INFO - Starting application...
+2025-04-04 06:00:44,458 - __main__ - INFO - Connecting to MongoDB: None
+2025-04-04 06:01:12,230 - __main__ - INFO - Starting application...
+2025-04-04 06:01:12,232 - __main__ - INFO - Connecting to MongoDB: mongodb+srv://kadrishams342:Fluthasan342%40.@my-first-cluster.mfluf.mongodb.net/
+2025-04-04 06:01:20,622 - __main__ - INFO - Model loaded successfully.
+2025-04-04 06:01:20,834 - __main__ - INFO - Successfully connected to MongoDB. Collections: ['analyses', 'capstone', 'users']
+2025-04-04 06:01:20,859 - __main__ - INFO - Found 2 users in the database
+2025-04-04 06:01:20,862 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8500
+ * Running on http://192.168.2.132:8500
+2025-04-04 06:01:20,862 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-04 06:01:38,254 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:01:38] "GET / HTTP/1.1" 200 -
+2025-04-04 06:01:39,951 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:01:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:01:39,967 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:01:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:09:46,148 - __main__ - INFO - Starting application...
+2025-04-04 06:09:46,151 - __main__ - INFO - Connecting to MongoDB: mongodb+srv://kadrishams342:Fluthasan342%40.@my-first-cluster.mfluf.mongodb.net/
+2025-04-04 06:09:54,290 - __main__ - INFO - Model loaded successfully.
+2025-04-04 06:09:54,502 - __main__ - INFO - Successfully connected to MongoDB. Collections: ['analyses', 'capstone', 'users']
+2025-04-04 06:09:54,532 - __main__ - INFO - Found 2 users in the database
+2025-04-04 06:09:54,534 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8500
+ * Running on http://192.168.2.132:8500
+2025-04-04 06:09:54,534 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-04-04 06:10:39,846 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:10:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:11:39,854 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:11:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:12:10,850 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:12:10] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:12:40,844 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:12:40] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:13:39,859 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:13:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:14:39,868 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:14:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:15:39,855 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:15:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:16:22,163 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:16:22] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:16:40,857 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:16:40] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:17:10,859 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:17:10] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:17:40,861 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:17:40] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:18:39,862 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:18:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:19:39,879 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:19:39] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:20:11,287 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:20:11] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:20:40,871 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:20:40] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:21:10,889 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:21:10] "GET /test HTTP/1.1" 200 -
+2025-04-04 06:22:39,897 - werkzeug - INFO - 192.168.2.30 - - [04/Apr/2025 06:22:39] "GET /test HTTP/1.1" 200 -

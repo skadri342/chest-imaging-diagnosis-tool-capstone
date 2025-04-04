@@ -1201,6 +1201,6 @@ if __name__ == '__main__':
         logger.error(f"Failed to connect to MongoDB: {str(e)}")
     
     # Run the app
-    port = int(os.getenv('PORT', 8000))
+    port = int(os.getenv('PORT', 8500))  # Changed port to 8001 to avoid conflicts
     debug = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
     app.run(host='0.0.0.0', port=port, debug=debug)
