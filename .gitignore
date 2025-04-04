@@ -5,6 +5,9 @@ backend/src/routes/__pycache__/
 backend/*.pyc
 backend/.env
 **/__pycache__/
+backend/dataset/
+backend/uploads/
+backend/saved_model/
 
 # Frontend
 frontend/node_modules/

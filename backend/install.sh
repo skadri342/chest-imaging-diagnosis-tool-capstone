@@ -23,10 +23,10 @@ fi
 # Detect operating system
 OS="$(uname -s)"
 case "$OS" in
-    Linux*)     machine=Linux;;
-    Darwin*)    machine=Mac;;
-    CYGWIN*|MINGW*|MSYS_NT*) machine=Windows;;
-    *)          machine="UNKNOWN"
+    (Linux*)     machine=Linux;;
+    (Darwin*)    machine=Mac;;
+    (CYGWIN*|MINGW*|MSYS_NT*) machine=Windows;;
+    (*)          machine="UNKNOWN"
 esac
 
 # Activate the virtual environment based on OS

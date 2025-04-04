@@ -28,6 +28,17 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+          950: '#082f49',
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -53,9 +64,16 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        brown: {
-          600: '#8B4513',
-          700: '#693610',
+        medical: {
+          100: '#e6f1f9',
+          200: '#cce4f2',
+          300: '#99c9e6',
+          400: '#66aed9',
+          500: '#3393cd',
+          600: '#1976d2',
+          700: '#0d62b5',
+          800: '#0a4f92',
+          900: '#063c70',
         }
       },
       borderRadius: {
