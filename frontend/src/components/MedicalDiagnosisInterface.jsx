@@ -65,12 +65,35 @@ export default function MedicalDiagnosisInterface() {
         setError(null);
         
         try {
-            const results = await medicalService.analyzeImage(imageFile);
+            console.log('Starting image analysis...');
+            
+            // Add a timeout to prevent the button from staying disabled indefinitely
+            const analyzePromise = medicalService.analyzeImage(imageFile);
+            
+            // Create a timeout promise
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => {
+                    reject(new Error('Analysis request timed out. Please try again.'));
+                }, 30000); // 30 seconds timeout for image processing
+            });
+            
+            // Race between analysis and timeout
+            const results = await Promise.race([analyzePromise, timeoutPromise]);
+            console.log('Analysis completed successfully:', results);
             setAnalysisResult(results);
         } catch (err) {
-            setError(err.message || 'Analysis failed. Please try again.');
-            console.error('Analysis error:', err);
+            console.error('Analysis error in component:', err);
+            
+            // Display a more user-friendly error message
+            if (err.message && err.message.includes('timeout')) {
+                setError('Analysis timed out. The server might be busy or the image too large. Please try again later.');
+            } else if (err.message && err.message.includes('Network Error')) {
+                setError('Network error. Please check your internet connection and try again.');
+            } else {
+                setError(err.message || 'Analysis failed. Please try again.');
+            }
         } finally {
+            console.log('Analysis process finished, setting isAnalyzing to false');
             setIsAnalyzing(false);
         }
     };

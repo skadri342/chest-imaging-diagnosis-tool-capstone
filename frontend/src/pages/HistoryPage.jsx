@@ -1,51 +1,124 @@
 // src/pages/HistoryPage.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { medicalService } from '../lib/api';
+import { Alert, AlertDescription } from '../components/ui/alert';
 
 export default function HistoryPage() {
-  // In the future, this would be fetched from the API
   const [analyses, setAnalyses] = useState([]);
-  // Placeholder for demonstration
-  const placeholderAnalyses = [
-    {
-      id: 1,
-      date: new Date('2023-12-15T14:32:00'),
-      imageUrl: 'https://via.placeholder.com/100',
-      conditions: [
-        { name: 'Pneumonia', probability: 0.85 },
-        { name: 'Pleural Effusion', probability: 0.32 }
-      ]
-    },
-    {
-      id: 2,
-      date: new Date('2023-12-10T09:45:00'),
-      imageUrl: 'https://via.placeholder.com/100',
-      conditions: [
-        { name: 'No Finding', probability: 0.92 }
-      ]
-    }
-  ];
-  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedTab, setSelectedTab] = useState('analyses');
+  
+  // Fetch history from API on component mount
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+  
+  // Function to fetch history from API
+  const fetchHistory = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('Fetching diagnosis history...');
+      
+      const response = await medicalService.getHistory();
+      console.log('History response:', response);
+      
+      if (response && response.analyses) {
+        if (response.analyses.length === 0) {
+          console.log('No analyses found in response (empty array)');
+          setAnalyses([]);
+          return;
+        }
+        
+        // Map API response to component state format
+        const formattedAnalyses = response.analyses.map(analysis => {
+          console.log('Processing analysis:', analysis);
+          
+          // Use image URL from response if available, otherwise use a local SVG data URI
+          const fallbackImageUrl = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20fill%3D%22%23f0f0f0%22%20width%3D%22100%22%20height%3D%22100%22%2F%3E%3Ctext%20fill%3D%22%23888888%22%20font-family%3D%22Arial%2CSans-serif%22%20font-size%3D%2212%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3EX-Ray%3C%2Ftext%3E%3C%2Fsvg%3E';
+          const imageUrl = analysis.image_url || fallbackImageUrl;
+          
+          // Handle possible missing or malformed predictions
+          let conditions = [];
+          if (analysis.predictions && Array.isArray(analysis.predictions)) {
+            conditions = analysis.predictions.map(pred => ({
+              name: pred.label || "Unknown",
+              probability: pred.probability || 0
+            }));
+          } else {
+            console.warn('Missing or invalid predictions for analysis:', analysis.id);
+          }
+          
+          return {
+            id: analysis.id || 'unknown-id',
+            date: analysis.timestamp || new Date().toISOString(),
+            filename: analysis.filename || 'unknown-file',
+            imageUrl: imageUrl,
+            conditions: conditions
+          };
+        });
+        
+        setAnalyses(formattedAnalyses);
+        console.log(`Loaded ${formattedAnalyses.length} analyses from history`);
+      } else {
+        console.warn('No analyses array found in response');
+        setAnalyses([]);
+      }
+    } catch (err) {
+      console.error('Error fetching history:', err);
+      setError(err.message || 'Failed to load history');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Function to view analysis details
+  const viewDetails = (analysisId) => {
+    console.log('Viewing details for analysis:', analysisId);
+    
+    // Open details in a new tab/window for now
+    // In a more complete implementation, this could open a modal with details
+    medicalService.getAnalysisDetails(analysisId)
+      .then(response => {
+        if (response && response.status === 'success' && response.analysis) {
+          // For now just open the image directly as a simple implementation
+          if (response.analysis.image_url) {
+            window.open(response.analysis.image_url, '_blank');
+          } else {
+            alert('No image available for this analysis');
+          }
+        } else {
+          alert('Could not load analysis details');
+        }
+      })
+      .catch(error => {
+        console.error('Error loading analysis details:', error);
+        alert('Error loading analysis details: ' + error.message);
+      });
+  };
+  
+  // Function to download analysis report
+  const downloadReport = (analysisId) => {
+    console.log('Downloading report for analysis:', analysisId);
+    medicalService.downloadReport(analysisId);
+  };
   
   // Function to format date
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-  
-  // Toggle between real data (empty for now) and placeholder data
-  const togglePlaceholder = () => {
-    if (analyses.length === 0) {
-      setAnalyses(placeholderAnalyses);
-    } else {
-      setAnalyses([]);
+    try {
+      return new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      console.error('Date formatting error:', e);
+      return date; // Return original if formatting fails
     }
   };
 
@@ -57,14 +130,22 @@ export default function HistoryPage() {
           <p className="text-gray-600">View your past analyses and consultations</p>
         </div>
         
-        {/* Demo toggle button */}
+        {/* Refresh button */}
         <Button 
-          onClick={togglePlaceholder}
+          onClick={fetchHistory}
           className="bg-medical-600 hover:bg-medical-700"
+          disabled={loading}
         >
-          {analyses.length === 0 ? 'Show Demo Data' : 'Hide Demo Data'}
+          {loading ? 'Loading...' : 'Refresh History'}
         </Button>
       </div>
+      
+      {/* Error display */}
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       
       {/* Tabs */}
       <div className="border-b">
@@ -104,8 +185,13 @@ export default function HistoryPage() {
                       <div className="h-20 w-20 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
                         <img
                           src={analysis.imageUrl}
-                          alt="X-ray thumbnail"
+                          alt={`X-ray: ${analysis.filename}`}
                           className="h-full w-full object-cover"
+                          onError={(e) => {
+                            console.error('Image failed to load:', analysis.imageUrl);
+                            // Use a data URI for the fallback image instead of an external service
+                            e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20fill%3D%22%23f0f0f0%22%20width%3D%22100%22%20height%3D%22100%22%2F%3E%3Ctext%20fill%3D%22%23888888%22%20font-family%3D%22Arial%2CSans-serif%22%20font-size%3D%2212%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3EX-Ray%3C%2Ftext%3E%3C%2Fsvg%3E';
+                          }}
                         />
                       </div>
                       <div className="ml-4 flex-1">
@@ -133,14 +219,16 @@ export default function HistoryPage() {
                           <Button 
                             variant="outline" 
                             className="text-sm border-gray-300 text-gray-700 hover:bg-gray-50"
+                            onClick={() => viewDetails(analysis.id)}
                           >
                             View Details
                           </Button>
                           <Button 
                             variant="outline" 
                             className="text-sm border-gray-300 text-gray-700 hover:bg-gray-50"
+                            onClick={() => downloadReport(analysis.id)}
                           >
-                            Download PDF
+                            Download Report
                           </Button>
                         </div>
                       </div>

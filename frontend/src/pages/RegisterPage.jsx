@@ -41,12 +41,39 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await register(name, email, password);
+      console.log('RegisterPage: Starting registration process...');
+      
+      // Add a timeout to prevent the button from staying disabled indefinitely
+      const registerPromise = register(name, email, password);
+      
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Registration request timed out. Please try again.'));
+        }, 15000); // 15 seconds timeout
+      });
+      
+      // Race between registration and timeout
+      await Promise.race([registerPromise, timeoutPromise]);
+      
       // Redirect to login page after successful registration
+      console.log('Registration successful, redirecting to login');
       navigate('/login', { state: { message: 'Registration successful. Please log in.' } });
     } catch (err) {
-      setError(err.message || 'Failed to create account. Please try again.');
+      console.error('Registration error in component:', err);
+      
+      // Display a more user-friendly error message
+      if (err.message && err.message.includes('timeout')) {
+        setError('Connection to server timed out. Please check your internet connection and try again.');
+      } else if (err.message && err.message.includes('Network Error')) {
+        setError('Network error. Please check if the server is running and try again.');
+      } else if (err.message && err.message.includes('User already exists')) {
+        setError('An account with this email already exists. Please use a different email or try to log in.');
+      } else {
+        setError(err.message || 'Failed to create account. Please try again.');
+      }
     } finally {
+      console.log('RegisterPage: Registration process finished, setting isLoading to false');
       setIsLoading(false);
     }
   };

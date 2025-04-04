@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '../components/ui/button';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { EMAIL_REGEX } from '../lib/api';
+import ApiStatusIndicator from '../components/ApiStatusIndicator';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -17,12 +18,13 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check for success message in location state (e.g., after registration)
+  // Check for success message or redirect location in location state
   useEffect(() => {
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
-      // Clear the message after showing it
-      navigate(location.pathname, { replace: true, state: {} });
+      // Clear the message after showing it but preserve 'from' if it exists
+      const newState = location.state.from ? { from: location.state.from } : {};
+      navigate(location.pathname, { replace: true, state: newState });
     }
   }, [location, navigate]);
 
@@ -39,11 +41,37 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      console.log('LoginPage: Starting login process...');
+      
+      // Add a timeout to prevent the button from staying disabled indefinitely
+      const loginPromise = login(email, password);
+      
+      // Create a timeout promise
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Login request timed out. Please try again.'));
+        }, 15000); // 15 seconds timeout
+      });
+      
+      // Race between login and timeout
+      await Promise.race([loginPromise, timeoutPromise]);
+      
+      // Redirect to the page the user was trying to access, or dashboard if none
+      const redirectTo = location.state?.from || '/dashboard';
+      console.log('Login successful, redirecting to:', redirectTo);
+      navigate(redirectTo);
     } catch (err) {
-      setError(err.message || 'Failed to login. Please check your credentials.');
+      console.error('Login error in component:', err);
+      // Display a more user-friendly error message
+      if (err.message && err.message.includes('timeout')) {
+        setError('Connection to server timed out. Please check your internet connection and try again.');
+      } else if (err.message && err.message.includes('Network Error')) {
+        setError('Network error. Please check if the server is running and try again.');
+      } else {
+        setError(err.message || 'Failed to login. Please check your credentials.');
+      }
     } finally {
+      console.log('LoginPage: Login process finished, setting isLoading to false');
       setIsLoading(false);
     }
   };
@@ -123,6 +151,11 @@ export default function LoginPage() {
               {/* Demo credentials notice */}
               <div className="text-xs text-center text-gray-500 mt-2">
                 <p>Demo credentials: <span className="font-medium">test@gmail.com / test123</span></p>
+              </div>
+              
+              {/* API Status indicator */}
+              <div className="mt-4 flex justify-center">
+                <ApiStatusIndicator />
               </div>
             </form>
           </CardContent>

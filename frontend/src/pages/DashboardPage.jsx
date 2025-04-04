@@ -1,10 +1,51 @@
 // src/pages/DashboardPage.jsx
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
+import { medicalService } from '../lib/api';
 
 export default function DashboardPage() {
   const { currentUser } = useAuth();
+  const [analysisCount, setAnalysisCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Fetch the history data on component mount to get counts
+  useEffect(() => {
+    const fetchHistoryCounts = async () => {
+      try {
+        setIsLoading(true);
+        console.log('Dashboard: Fetching history for counters...');
+        const response = await medicalService.getHistory();
+        console.log('Dashboard: History response for counters:', response);
+        
+        if (response && response.analyses) {
+          const count = response.analyses.length;
+          console.log(`Dashboard: Setting analysis count to ${count}`);
+          setAnalysisCount(count);
+        } else {
+          console.warn('Dashboard: No analyses array in response');
+          setAnalysisCount(0);
+        }
+      } catch (error) {
+        console.error('Dashboard: Error fetching history counts:', error);
+        // Keep count at 0 on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchHistoryCounts();
+    
+    // Set up refresh interval (every 30 seconds)
+    const intervalId = setInterval(() => {
+      console.log('Dashboard: Auto-refreshing counters');
+      fetchHistoryCounts();
+    }, 30000);
+    
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -22,7 +63,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center">
-              <div className="text-3xl font-bold text-medical-600">0</div>
+              <div className="text-3xl font-bold text-medical-600">
+                {isLoading ? '...' : analysisCount}
+              </div>
               <div className="p-2 rounded-full bg-medical-100 text-medical-600">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -64,7 +107,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center">
-              <div className="text-3xl font-bold text-medical-600">0</div>
+              <div className="text-3xl font-bold text-medical-600">
+                {isLoading ? '...' : analysisCount}
+              </div>
               <div className="p-2 rounded-full bg-medical-100 text-medical-600">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />

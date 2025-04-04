@@ -3,6 +3,9 @@
 # Function to create a virtual environment
 create_venv() {
     if command -v python3 &> /dev/null; then
+        echo "Creating virtual environment using 'python3'..."
+        python3 -m venv .venv
+    elif command -v python &> /dev/null; then
         echo "Creating virtual environment using 'python'..."
         python -m venv .venv
     else
