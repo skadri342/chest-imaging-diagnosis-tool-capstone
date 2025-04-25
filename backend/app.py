@@ -36,9 +36,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.info("Starting application...")
 
-app = Flask(__name__)
-# Simplify CORS config to allow all origins, methods, and headers
-CORS(app, origins="*", allow_headers="*", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+app = Flask(__name__, static_folder='static')
+CORS(app, resources={
+    r"/static/*": {"origins": "https://chest-imaging-diagnosis-tool-capstone.onrender.com"},
+    r"/api_model/*": {"origins": "https://chest-imaging-diagnosis-tool-capstone.onrender.com"}
+})
 
 # Create a global dictionary to store active tokens
 # In a production app, this would be in Redis or a database
@@ -263,7 +265,10 @@ def token_required(f):
 # Basic routes
 @app.route('/')
 def index():
-    return jsonify({'message': 'Welcome to MediScan API'})
+    # Add CORS headers for simple request
+    response = jsonify({'message': 'Welcome to MediScan API'})
+    response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
+    return response
 
 @app.route('/test')
 def test():
@@ -281,7 +286,17 @@ def test():
         'cors': 'enabled'
     }
     
-    return jsonify(status)
+    # Add CORS headers for simple request
+    response = jsonify(status)
+    response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
+    return response
+
+@app.route('/chest-imaging')
+def chest_imaging():
+    """Route for the chest imaging diagnosis tool, needed for nginx proxy"""
+    response = jsonify({'message': 'Welcome to the Chest Imaging Diagnosis Tool API'})
+    response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
+    return response
 
 @app.route('/api/db/test')
 def db_test():
@@ -361,7 +376,7 @@ def direct_register():
         # Allow CORS preflight
         if request.method == 'OPTIONS':
             response = jsonify({"message": "CORS preflight OK"})
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
             response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
             return response, 200
@@ -401,7 +416,7 @@ def direct_register():
             response = jsonify({
                 'message': 'Name, email, and password are required'
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response, 400
         
         # Check email format
@@ -409,7 +424,7 @@ def direct_register():
             response = jsonify({
                 'message': 'Invalid email format'
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response, 400
         
         # Check password length
@@ -417,7 +432,7 @@ def direct_register():
             response = jsonify({
                 'message': 'Password must be at least 6 characters'
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response, 400
             
         # Check if user already exists
@@ -427,7 +442,7 @@ def direct_register():
                 'message': 'User already exists with this email',
                 'status': 'error'
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response, 409  # Conflict
             
         # Create the user
@@ -463,7 +478,7 @@ def direct_register():
                 'user': user_data,
                 'status': 'success'
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response, 201
             
         except Exception as e:
@@ -472,7 +487,7 @@ def direct_register():
                 'message': f'Registration failed: {str(e)}',
                 'status': 'error'
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response, 500
             
     except Exception as e:
@@ -497,7 +512,7 @@ def direct_login():
         # Allow CORS preflight
         if request.method == 'OPTIONS':
             response = jsonify({"message": "CORS preflight OK"})
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
             response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
             return response, 200
@@ -609,7 +624,7 @@ def direct_login():
                 'user': user_data,
                 'message': 'Direct login successful'
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response
         
         # If invalid credentials, return error
@@ -770,7 +785,7 @@ def emergency_analyze():
         # Handle CORS preflight
         if request.method == 'OPTIONS':
             response = jsonify({"message": "CORS preflight OK"})
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             response.headers.add('Access-Control-Allow-Headers', '*')
             response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
             return response, 200
@@ -858,7 +873,7 @@ def emergency_analyze():
     except Exception as e:
         logger.error(f"Emergency analysis error: {str(e)}")
         response = jsonify({'status': 'error', 'message': f'Emergency analysis failed: {str(e)}'})
-        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
         return response, 500
 
 # ML routes
@@ -942,7 +957,7 @@ def emergency_history():
         # Handle CORS preflight
         if request.method == 'OPTIONS':
             response = jsonify({"message": "CORS preflight OK"})
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             response.headers.add('Access-Control-Allow-Headers', '*')
             response.headers.add('Access-Control-Allow-Methods', 'GET,OPTIONS')
             return response, 200
@@ -997,7 +1012,7 @@ def emergency_history():
                 'analyses': formatted_analyses,
                 'count': len(formatted_analyses)
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response
             
         except Exception as db_error:
@@ -1011,7 +1026,7 @@ def emergency_history():
                 'message': 'Error accessing database',
                 'error': str(db_error)
             })
-            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
             return response
             
     except Exception as e:
@@ -1123,7 +1138,7 @@ Predictions:
         response.headers.set('Content-Disposition', f'attachment; filename=analysis-{analysis_id}.txt')
         
         # Add CORS headers
-        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
         return response
         
     except Exception as e:
@@ -1170,13 +1185,13 @@ def get_analysis_details(analysis_id):
         })
         
         # Add CORS headers
-        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
         return response
         
     except Exception as e:
         logger.error(f"Error getting analysis details: {str(e)}")
         response = jsonify({'status': 'error', 'message': f'Failed to get analysis details: {str(e)}'})
-        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Origin', 'https://chest-imaging-diagnosis-tool-capstone.onrender.com')
         return response, 500
 
 @app.teardown_appcontext
